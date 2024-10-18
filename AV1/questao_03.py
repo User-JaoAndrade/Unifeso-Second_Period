@@ -99,6 +99,7 @@ def game(palavra_secreta: str, diminuindo_pontos: int, dica: str) -> None:
         tentativas: int = 6
         letras_jogadas: typing.List[str] = []  # Registro de letras jogadas
         acertou_palavra: bool = False
+        pontuacao_inicial: int = 100  # Pontuação inicial para cada rodada
 
         # Jogador x jogando
         while tentativas > 0 and not acertou_palavra:
@@ -115,8 +116,9 @@ def game(palavra_secreta: str, diminuindo_pontos: int, dica: str) -> None:
                 else:
                     print("_", end=' ')
             print(f"\nDICA: {dica}")
-            print(f"{jogador} está jogando\nPontos: {pontos}")
+            print(f"{jogador} está jogando\nPontos: {jogadores[jogador]}")
             print(f"Tentativas restantes: {tentativas}")
+            print(f"Letras já jogadas: {', '.join(letras_jogadas)}")
 
             # Pedindo palavra ou letra para ser adivinhada
             advinhando: str = input("\nInforme uma palavra ou letra: ").strip().lower()
@@ -132,12 +134,18 @@ def game(palavra_secreta: str, diminuindo_pontos: int, dica: str) -> None:
                 if advinhando == palavra_secreta:
                     print(f">>> {jogador} acertou a palavra <<<")
                     acertou_palavra = True
+                    # Bônus de acerto direto
+                    jogadores[jogador] += pontuacao_inicial + (tentativas * 10)
+                    print(f"Pontuação atualizada: {jogadores[jogador]}")
+                    time.sleep(2)
                     break
                 else:
                     print(f">>> {jogador} errou a palavra <<<")
-                    jogadores[jogador] -= 20  # Penalidade por errar a palavra
+                    # Penalidade maior por errar a palavra
+                    jogadores[jogador] -= 30
                     tentativas -= 1
-                    time.sleep(1.5)
+                    print(f"Pontuação atualizada: {jogadores[jogador]}")
+                    time.sleep(2)
                     continue
 
             # Adicionando a letra ao registro de jogadas
@@ -146,12 +154,17 @@ def game(palavra_secreta: str, diminuindo_pontos: int, dica: str) -> None:
             # Verificando se a letra não está na palavra
             if advinhando not in palavra_secreta:
                 print(f">>> A letra '{advinhando}' não está na palavra <<<")
-                jogadores[jogador] -= diminuindo_pontos  # Reduz pontos por erro
+                # Penalidade progressiva
+                jogadores[jogador] -= diminuindo_pontos * (6 - tentativas)
                 tentativas -= 1
-                time.sleep(1.5)
+                print(f"Pontuação atualizada: {jogadores[jogador]}")
+                time.sleep(2)
             else:
                 print(f">>> A letra '{advinhando}' está na palavra! <<<")
-                time.sleep(1.5)
+                # Bônus por acerto
+                jogadores[jogador] += 10
+                print(f"Pontuação atualizada: {jogadores[jogador]}")
+                time.sleep(2)
 
         if not acertou_palavra and tentativas == 0:
             enforcando_boneco(0)  # Mostra o boneco completo se perdeu
