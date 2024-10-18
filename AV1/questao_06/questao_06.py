@@ -14,6 +14,7 @@
 # Dicas: (i) considere utilizar classes, listas e dicionários; (ii) utilize o método DictReader
 # do módulo csv do Python para ler os registros dos arquivos. Os arquivos .csv estão
 # disponíveis para download em https://bit.ly/3ZAX962.
+
 import os
 import time
 import pandas as pd 
@@ -113,8 +114,8 @@ def aluguel_de_livro() -> None:
             # Caso o usuário já tenha alugado um livro
             if user_matricula in relatorios.keys():
                 limpando_terminal
-                print(f"ATENÇÃO\n{user_matricula} já alugou um livro, devolva o livro anterior antes de alugar um novo!")
-                input("Pressione ENTER para voltar ao menu")
+                print(f"\n>> ATENÇÃO <<\n{user_matricula} já alugou um livro, devolva o livro anterior antes de alugar um novo!")
+                input("\nPressione ENTER para voltar ao menu...")
                 main()
             
             # Verificando se o número de matrícula está no banco de dados
@@ -146,49 +147,22 @@ def aluguel_de_livro() -> None:
             case _:
                 main()
     
-    # informando a data que foi realizado o aluguel
-    while True:
-        try:
-            print("\n>>> INFORME A DATA QUE O LIVRO FOI ALUGADO <<<\n")
-            dia: int = int(input("Dia: "))
-            mes: int = int(input("Mês: "))
-            data_que_foi_alugado = dt.date(dia_de_hoje.year, mes, dia) # Criando a data inicial
-            
-            # Verificando se a data é válida
-            if data_que_foi_alugado > dia_de_hoje:
-                input(f"\nVEIO DO FUTURO CHEFE? Não foi possível alugar, informe uma data anterior ou igual a {dia_de_hoje}")
-                continue
-
-            data_de_entrega = data_que_foi_alugado + dt.timedelta(days=15) # Criando a data de entrega
-            break
-        except ValueError:
-            input("POR FAVOR, INFORME UMA DATA VÁLIDA")
+    data_de_entrega = dia_de_hoje + dt.timedelta(days=15) # Criando a data de entrega
     
     limpando_terminal()
     print("\n>>> INFORMAÇÕES SOBRE O ALUGUEL <<<\n")
     print(f"Usuário: {row_membros['Matrícula'].iloc[0]} - {row_membros['Nome'].iloc[0]}\n"
           f"Nome do Livro: {row_livro['Título'].iloc[0]}\n"
-          f"Alugado dia: {data_que_foi_alugado}\n"
-          f"Data de Entrega: {data_de_entrega.day}\n"
+          f"Alugado dia: {dia_de_hoje}\n"
+          f"Data de Entrega: {data_de_entrega}\n"
           f"Será cobrado R$10,00 por cada dia de atraso na entrega")
     
     # Diminuindo a quantidade de livros no csv
     livros_df.loc[livros_df['Título'] == nome_livro, 'Quantidade'] -= 1
 
-    # calculando possivel multa
-    dias_passados: int = (dia_de_hoje - data_que_foi_alugado).days
-
-    # Verificando se existe atraso
-    if dias_passados > 15:
-        multa: float = (dias_passados - 15) * 10 # Calculando valor da multa
-        membros_df.loc[membros_df['Matrícula'] == user_matricula, 'Atrasos'] += 1 # Incrementando mais um atraso para o valor na coluna 'Atrasos'
-        membros_df.loc[membros_df['Matrícula'] == user_matricula, 'Multas'] += multa # Somando o total de multa que o usuário pagou no histórico
-    else:
-        multa: float = 0
-
     # Adicionando informações ao relatorio
-    relatorios[user_matricula] = [data_que_foi_alugado, data_de_entrega, row_membros['Nome'].iloc[0], nome_livro, multa]  
-    #                                      0                  1                       2                   3         4              
+    relatorios[user_matricula] = [data_de_entrega, row_membros['Nome'].iloc[0], nome_livro]  
+    #                                   1                       2                   3     
 
     # linhas pra deixar o códico fofo
     print("\n\no/ entregando livro", end='')
@@ -226,13 +200,44 @@ def devolucao_do_livro() -> None:
                 main()
     
     # Verificando livro para ser devolvido
-    nome_livro: str = input("\nInforme o livro para ser devolvido: ")
+    nome_livro: str = input("\n>> Informe o livro para ser devolvido <<\n"
+                            "-> ")
 
     # Verificando se o livro é o mesmo que foi alugado
-    while nome_livro != relatorios[numero_matricula][3]:
+    while nome_livro != relatorios[numero_matricula][2]:
         nome_livro = input("\nVOCÊ NÃO ALUGOU ESSE LIVRO\n"
               "informe o livro que alugou: ")
+        
+    # Pedindo a data de entrega do livro
+    while True:
+        print("\n>> Informe o dia que está devolvendo o livro <<\n")
+        try:
+            dia: int = int(input("Dia: "))
+            mes: int = int(input("Mês: "))
+            ano: int = int(input("Ano: "))
+            dia_da_entrega = dt.date(ano, mes, dia)
+            dias_passados: int = (dia_da_entrega - dia_de_hoje).days
+
+            # Verificando se a data informada antecede a data que foi recebido o livro
+            if dia_da_entrega < dia_de_hoje:
+                print(f"\n\nViajante do tempo amigo? Informe uma data após ou igual ao dia {dia_de_hoje}")
+                continue
+            else: 
+                break
+
+        except ValueError:
+            print("Por favor, informe uma data válida\n")
+            time.sleep(3)
     
+    # calculando possivel multa
+
+    # Verificando se existe atraso
+    if dias_passados > 15:
+        multa: float = (dias_passados - 15) * 10 # Calculando valor da multa
+    else:
+        multa: float = 0
+        dias_passados = 0
+ 
     # Mostrando informações sobre a devolução
     print("\nCalculando possível multa", end='')
     for i in '....':
@@ -242,20 +247,23 @@ def devolucao_do_livro() -> None:
     limpando_terminal()
 
     print(">> INFORMAÇÕES SOBRE A DEVOLUÇÃO <<\n\n"
-          f"Membro: {relatorios[numero_matricula][2]}\n"
-          f"Livro Alugado: {relatorios[numero_matricula][3]}\n"
-          f"Data de Aquisição: {relatorios[numero_matricula][0]}\n"
-          f"Data para ser Entregue: {relatorios[numero_matricula][1]}\n"
+          f"Membro: {relatorios[numero_matricula][1]}\n"
+          f"Livro Alugado: {relatorios[numero_matricula][2]}\n"
+          f"Data de Aquisição: {dia_de_hoje}\n"
+          f"Data para ser Entregue: {relatorios[numero_matricula][0]}\n"
           f"Data que foi entregue: {dia_de_hoje}\n"
-          f"Multa a ser paga: R${relatorios[numero_matricula][4]}")
+          f"Dias de atraso {dias_passados}"
+          f"Multa a ser paga: R${multa}")
     
     # Linhas de código pra deixar o programa mais fofinho
-    if relatorios[numero_matricula][4] > 0:
+    if multa > 0:
         print("\nPagando a multa", end='')
         for i in '...':
             print(i, end='')
             time.sleep(1)
-    
+        membros_df.loc[membros_df['Matrícula'] == numero_matricula, 'Atrasos'] += 1 # Adicionando um atraso ao histórico do usuario
+        membros_df.loc[membros_df['Matrícula'] == numero_matricula, 'Multas'] += multa # Incrementando valor da multa no histórico do usuario
+
     print(f"\nColocando '{nome_livro}' na prateleira", end='')
     for i in '...':
         print(i, end='')
