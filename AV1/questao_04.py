@@ -16,20 +16,6 @@ from typing import Dict, List, Union
 UserInfo = List[Union[str, float, str, List[str]]]
 UserDatabase = Dict[str, UserInfo]
 
-# Só coloquei o dicionário dentro dessa função
-# Sei que eu podia ter feito esse dicionário como uma variável global mas só pensei nisso depois (y)
-def main() -> None:
-    os.system('cls' if os.name == 'nt' else 'clear')
-    lista_de_usuarios: UserDatabase = {
-        'joao_victor': ['100101', 1450.0, 'unlocked', []],
-        'jose_gal': ['123456', 1800.0, 'unlocked', []],
-        'leonardo_otolindo': ['654321', 2000.0, 'unlocked', []],
-        'rolysson_prog': ['675432', 15000.0, 'unlocked', []]
-    }
-
-    menu(lista_de_usuarios)
-
-
 # Função para apagar linhas
 def limpar_linhas(n: int) -> None:
     for _ in range(n):
@@ -37,7 +23,7 @@ def limpar_linhas(n: int) -> None:
 
 
 # Função de Menu (dã)
-def menu(lista_de_usuarios: UserDatabase) -> None:
+def main() -> None:
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -46,17 +32,17 @@ def menu(lista_de_usuarios: UserDatabase) -> None:
 
         match var_selecao:
             case '1':
-                entrada_da_conta(lista_de_usuarios)
+                entrada_da_conta()
             case '2':
-                cadastrando_novo_usuario(lista_de_usuarios)
+                cadastrando_novo_usuario()
             case '3':
-                desbloqueio_de_conta(lista_de_usuarios)
+                desbloqueio_de_conta()
             case _:
                 exit()
 
 
 # Função que vai adicionar uma nova key e valores para o dicionário
-def cadastrando_novo_usuario(lista_de_usuarios: UserDatabase) -> None:
+def cadastrando_novo_usuario() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
 
     print(">>> CADASTRANDO NOVO CLIENTE <<<\n")
@@ -76,15 +62,13 @@ def cadastrando_novo_usuario(lista_de_usuarios: UserDatabase) -> None:
         senha_usuario = input("A sua senha não contém 6 digitos ou contém espaços, informe outra senha: ")
 
     print("\n<<<< USUARIO CADASTRADO COM SUCESSO >>>>")
-    for i in "...":
-        print(i, end='')
-        time.sleep(1)
+    tres_pontinhos()
 
     lista_de_usuarios[nome_usuario] = [senha_usuario, 0.0, 'unlocked', []] # adicionando a key e valores ao dicionário
 
 
 # Função para logar na conta
-def entrada_da_conta(lista_de_usuarios: UserDatabase) -> None:
+def entrada_da_conta() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
 
     # variável que vai guardar o número de tentativas ao colocar a senha
@@ -97,35 +81,33 @@ def entrada_da_conta(lista_de_usuarios: UserDatabase) -> None:
         limpar_linhas(1)
         var_selecao: str = input("Usuário não encontrado, deseja: [1] Tentar Novamente | [2] Realizar um novo cadastro | [outra tecla] Voltar ao Menu --> ")
         if var_selecao == '1':
-            entrada_da_conta(lista_de_usuarios)
+            entrada_da_conta()
         elif var_selecao == '2':
-            cadastrando_novo_usuario(lista_de_usuarios)
-            menu(lista_de_usuarios)
+            cadastrando_novo_usuario()
+            main()
         else: 
-            menu(lista_de_usuarios)
+            main()
         
     # Verificando se a conta está bloqueada
     if lista_de_usuarios[login_usuario][2] == 'locked':
         print("CONTA BLOQUEADA, VÁ ATÉ A BOCA DO CAIXA PARA REALIZAR O DESBLOQUEIO")
         print("\nRetornando", end='')
-        for i in "....":
-            print(i, end='')
-            time.sleep(1)
-        return
+        tres_pontinhos()
+
     # Pedindo senha ao usuário
     senha_usuario: str = input("SENHA: ")
 
-    verificacao_de_senha(lista_de_usuarios, senha_usuario, login_usuario)
+    verificacao_de_senha(senha_usuario, login_usuario)
 
     print("\nLOGANDO NA SUA CONTA", end='')
     for i in '...':
         print(i, end='')
         time.sleep(1)
-    informacoes_de_usuario(login_usuario, lista_de_usuarios)
+    informacoes_de_usuario(login_usuario)
 
 
 # Função para desbloquear uma conta
-def desbloqueio_de_conta(lista_de_usuarios: UserDatabase) -> None:
+def desbloqueio_de_conta() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
 
     print(">>>> DESBLOQUEIO DE CONTA <<<<\n")
@@ -133,6 +115,7 @@ def desbloqueio_de_conta(lista_de_usuarios: UserDatabase) -> None:
     
     # pedindo um nome de usuário presente no dicionário
     nome_usuario: str = input("Informe o usuário que deseja desbloquear: ")
+    
     # verificando se o usuário está presente na lista
     while nome_usuario not in lista_de_usuarios.keys():
         limpar_linhas(1)
@@ -140,6 +123,7 @@ def desbloqueio_de_conta(lista_de_usuarios: UserDatabase) -> None:
 
     # Colocando uma senha nova
     nova_senha = input("\nInforme uma nova senha\nps: Sua senha precisa ter 6 digitos e não pode conter espaços\nSenha de usuário: ")
+    
     # verificando se a senha contém espaços ou se possui um tamanho diferente de 6 digitos
     while ' ' in nova_senha or len(nova_senha) != 6:
         limpar_linhas(1)
@@ -152,16 +136,14 @@ def desbloqueio_de_conta(lista_de_usuarios: UserDatabase) -> None:
 
     print("\n<<<< NOVA SENHA CADASTRADA COM SUCESSO >>>>")
     print("Retornando para o menu", end='')
-    for i in "...":
-        print(i, end='')
-        time.sleep(1)
+    tres_pontinhos()
     
     lista_de_usuarios[nome_usuario][0] = nova_senha # Adicionando a nova senha
     lista_de_usuarios[nome_usuario][2] = 'unlocked' # Desbloqueando a conta
 
 
 # Função que mostra as informações do usuário selecionado
-def informacoes_de_usuario(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
+def informacoes_de_usuario(login_usuario: str) -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
 
     print(f">>> informações da {login_usuario}<<<\n")
@@ -170,19 +152,19 @@ def informacoes_de_usuario(login_usuario: str, lista_de_usuarios: UserDatabase) 
     
     match var_selecao:
         case '1':
-            deposito(login_usuario, lista_de_usuarios)
+            deposito(login_usuario)
         case '2':
-            saque(login_usuario, lista_de_usuarios)
+            saque(login_usuario)
         case'3':
-            transferencia(login_usuario, lista_de_usuarios)
+            transferencia(login_usuario)
         case '4':
-            extrato_bancario(login_usuario, lista_de_usuarios)
+            extrato_bancario(login_usuario)
         case _: 
-            menu(lista_de_usuarios)
+            main()
 
 
 # Função para depositar 'dinheiros' na conta
-def deposito(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
+def deposito(login_usuario: str) -> None:
     while True:
         try:
             os.system('cls' if os.name == 'nt' else 'clear')
@@ -202,23 +184,21 @@ def deposito(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
         # Pedindo senha para finalizar o deposito
         senha_usuario: str = input("SENHA: ")
         
-        verificacao_de_senha(lista_de_usuarios, senha_usuario, login_usuario)
+        verificacao_de_senha(senha_usuario, login_usuario)
 
         lista_de_usuarios[login_usuario][1] += valor_para_depositar # Adicionando o valor selecionado
         # adiconando uma frase para ver o extrato depois
         lista_de_usuarios[login_usuario][3].append(f"Depósito: R${valor_para_depositar:.2f}")
         
         print("Valor depositado com sucesso", end='')
-        for i in '...':
-            print(i, end='')
-            time.sleep(1)
+        tres_pontinhos()
         break
 
-    informacoes_de_usuario(login_usuario, lista_de_usuarios)
+    informacoes_de_usuario(login_usuario)
 
 
 # Função para retirada de dinheiro da conta 
-def saque(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
+def saque(login_usuario: str) -> None:
     while True:
         try:
             os.system('cls' if os.name == 'nt' else 'clear')
@@ -230,9 +210,7 @@ def saque(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
         # caso o usuário não coloque um número
         except ValueError:
             print("Por favor, informe apenas números", end='')
-            for i in '...':
-                print(i, end='')
-                time.sleep(1)
+            tres_pontinhos()
             continue
         
         # Verificando se o valor de retirada é maior que o saldo da conta
@@ -242,32 +220,32 @@ def saque(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
             if var_selecao == '1':
                 continue
             else: 
-                informacoes_de_usuario(login_usuario, lista_de_usuarios)
+                informacoes_de_usuario(login_usuario)
         
         # Pedindo senha para finalizar o deposito
         senha_usuario: str = input("SENHA: ")
         
-        verificacao_de_senha(lista_de_usuarios, senha_usuario, login_usuario)
+        verificacao_de_senha(senha_usuario, login_usuario)
                 
         lista_de_usuarios[login_usuario][1] -= valor_para_retirar # Subtraindo o valor informado
+        
         # Adicionando uma frase para ver o extrato depois
         lista_de_usuarios[login_usuario][3].append(f"Saque: R${valor_para_retirar:.2f}")
         
         print("Valor retirado com sucesso", end='')
-        for i in '...':
-            print(i, end='')
-            time.sleep(1)
+        tres_pontinhos()
         break
 
-    informacoes_de_usuario(login_usuario, lista_de_usuarios)
+    informacoes_de_usuario(login_usuario)
 
 
 # Função para transferência de valores entre as contas
-def transferencia(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
+def transferencia(login_usuario: str) -> None:
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
 
         print('>>>> TRANSFERÊNCIA <<<<\n')
+        
         # informando o usuário que deseja transferir
         usuario_para_transferir: str = input("Informe o nome do destinatário: ").lower()
         
@@ -283,9 +261,7 @@ def transferencia(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
         # caso o usuário não coloque um número
         except ValueError:
             print("Por favor, informe apenas números", end='')
-            for i in '...':
-                print(i, end='')
-                time.sleep(1)
+            tres_pontinhos()
             continue
 
         # Verificando se o valor para transferir excede o saldo da conta
@@ -295,12 +271,12 @@ def transferencia(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
             if var_selecao == '1':
                 continue
             else: 
-                informacoes_de_usuario(login_usuario, lista_de_usuarios)
+                informacoes_de_usuario(login_usuario)
         
         # Pedindo senha para finalizar o deposito
         senha_usuario: str = input("SENHA: ")
 
-        verificacao_de_senha(lista_de_usuarios, senha_usuario, login_usuario)
+        verificacao_de_senha(senha_usuario, login_usuario)
 
         lista_de_usuarios[login_usuario][1] -= valor_para_transferir # Subtraindo o valor informado
         lista_de_usuarios[usuario_para_transferir][1] += valor_para_transferir # Adicionando o valor informado
@@ -311,16 +287,14 @@ def transferencia(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
         lista_de_usuarios[usuario_para_transferir][3].append(f"Transferência de {login_usuario}: R${valor_para_transferir:.2f}")
 
         print("\nVoltando para o menu", end='')
-        for i in '...':
-            print(i, end='')
-            time.sleep(1)
+        tres_pontinhos()
         break
 
-    informacoes_de_usuario(login_usuario, lista_de_usuarios)
+    informacoes_de_usuario(login_usuario)
 
 
 # Função para ver os movimentos da conta
-def extrato_bancario(login_usuario: str, lista_de_usuarios: UserDatabase) -> None:
+def extrato_bancario(login_usuario: str) -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
 
     print(f">>> EXTRATO BANCÁRIO DE {login_usuario.upper()} <<<\n")
@@ -335,13 +309,16 @@ def extrato_bancario(login_usuario: str, lista_de_usuarios: UserDatabase) -> Non
             print(transacao)
 
     input("\nPressione Enter para voltar ao menu...")
-    informacoes_de_usuario(login_usuario, lista_de_usuarios)
+    informacoes_de_usuario(login_usuario)
 
 
 # Função que verifica se a senha está correta
-def verificacao_de_senha(lista_de_usuarios: UserDatabase, senha_usuario, login_usuario) -> None:
+def verificacao_de_senha(senha_usuario, login_usuario) -> None:
+    
     # Verificando se a senha está correta
     tentativas = 3 
+
+    # Verificando se a senha está errada
     while senha_usuario != lista_de_usuarios[login_usuario][0]:
         tentativas -= 1 
         # Caso as tentativas esgotem a conta será bloqueada
@@ -349,12 +326,23 @@ def verificacao_de_senha(lista_de_usuarios: UserDatabase, senha_usuario, login_u
             lista_de_usuarios[login_usuario][2] = 'locked'
             print("Sua conta foi bloqueada, por favor dirija-se a boca do caixa para realizar o desbloqueio: ")
             print("Retornando", end="")
-            for i in "...":
-                print(i, end='')
-                time.sleep(1)
-            menu(lista_de_usuarios)
+            tres_pontinhos()
+            main()
         senha_usuario = input(f"Senha inválida, tentativas restantes {tentativas}: ")
         
+
+# função da animação dos pontinhos
+def tres_pontinhos():
+    for i in "...":
+        print(i, end='')
+        time.sleep(1)
     
 if __name__ == "__main__":
+    lista_de_usuarios: UserDatabase = {
+        'joao_victor': ['100101', 1450.0, 'unlocked', []],
+        'jose_gal': ['123456', 1800.0, 'unlocked', []],
+        'leonardo_otolindo': ['654321', 2000.0, 'unlocked', []],
+        'rolysson_prog': ['675432', 15000.0, 'unlocked', []]
+    }
+
     main()
