@@ -44,7 +44,7 @@ def main()-> None:
                 print("\n>>> RESULTADO <<<")
                 print (f"{number} = {i} + {number - i}")
                 break
-        else:
+        else: # Caso não tenha pares existentes
             print("\n-1")
             break
         
