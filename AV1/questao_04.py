@@ -49,6 +49,7 @@ def cadastrando_novo_usuario() -> None:
 
     # Pedindo um nome pro usuário
     nome_usuario = input("Informe um nome de usuario: ").lower()
+
     # Verificando se já existe esse usuário (key) no dicionário
     while ' ' in nome_usuario or nome_usuario in lista_de_usuarios.keys():
         limpar_linhas(1)
@@ -56,6 +57,7 @@ def cadastrando_novo_usuario() -> None:
 
     # Pedindo uma senha para o usuário
     senha_usuario = input("\nInforme uma senha\nps: Sua senha precisa ter 6 digitos e não pode conter espaços\nSenha de usuário: ")
+
     # Verificando se a senha contém espaços e se possui 6 caracteres
     while ' ' in senha_usuario or len(senha_usuario) != 6:
         limpar_linhas(1)
@@ -176,9 +178,7 @@ def deposito(login_usuario: str) -> None:
         # caso o usuário não coloque um número
         except ValueError:
             print("Por favor, informe apenas números", end='')
-            for i in '...':
-                print(i, end='')
-                time.sleep(1)
+            tres_pontinhos()
             continue
 
         # Pedindo senha para finalizar o deposito
@@ -188,7 +188,7 @@ def deposito(login_usuario: str) -> None:
 
         lista_de_usuarios[login_usuario][1] += valor_para_depositar # Adicionando o valor selecionado
         # adiconando uma frase para ver o extrato depois
-        lista_de_usuarios[login_usuario][3].append(f"Depósito: R${valor_para_depositar:.2f}")
+        lista_de_usuarios[login_usuario][3].append(f"+R${valor_para_depositar:.2f}")
         
         print("Valor depositado com sucesso", end='')
         tres_pontinhos()
@@ -230,7 +230,7 @@ def saque(login_usuario: str) -> None:
         lista_de_usuarios[login_usuario][1] -= valor_para_retirar # Subtraindo o valor informado
         
         # Adicionando uma frase para ver o extrato depois
-        lista_de_usuarios[login_usuario][3].append(f"Saque: R${valor_para_retirar:.2f}")
+        lista_de_usuarios[login_usuario][3].append(f"-R${valor_para_retirar:.2f}")
         
         print("Valor retirado com sucesso", end='')
         tres_pontinhos()
@@ -248,12 +248,33 @@ def transferencia(login_usuario: str) -> None:
         
         # informando o usuário que deseja transferir
         usuario_para_transferir: str = input("Informe o nome do destinatário: ").lower()
-        
-        # verificando se o usuário informado existe no dicionário
-        while usuario_para_transferir not in lista_de_usuarios.keys():
-            limpar_linhas(1)
-            usuario_para_transferir = input("Usuário não encontrado, informe um usuário válido: ")
 
+        # verificando se o usuário informado existe no dicionário
+        if usuario_para_transferir not in lista_de_usuarios.keys():
+            print ("\n>> Usuário não encontrado <<\n\n")
+            var_selecao: str = input("Deseja tentar novamente?\n"
+                                     "[1] Sim\n"
+                                     "[Outra tecla] Não\n"
+                                     "-> ")
+            match var_selecao:
+                case '1': 
+                    continue
+                case _:
+                    informacoes_de_usuario(login_usuario)
+
+        # Verificando se vai tentar tranferir para a própria conta
+        if usuario_para_transferir == login_usuario:
+            print("\n>>> Não é possivel tranferir para sua própria conta <<<\n\n")
+            var_selecao: str = input("Deseja tentar novamente?\n"
+                                     "[1] Sim\n"
+                                     "[Outra tecla] Não\n"
+                                     "-> ")
+            match var_selecao:
+                case '1': 
+                    continue
+                case _:
+                    informacoes_de_usuario(login_usuario)
+        
         try:
             # Pedindo um valor de transferência
             valor_para_transferir: float = float(input(f"Informe o valor que deseja transferir para {usuario_para_transferir}: "))
@@ -267,7 +288,7 @@ def transferencia(login_usuario: str) -> None:
         # Verificando se o valor para transferir excede o saldo da conta
         if valor_para_transferir > lista_de_usuarios[login_usuario][1]:
             limpar_linhas(1)
-            var_selecao: str = input("O valor de transferência excede seu saldo\n[1] Colocar outro valor\n[outra tecla] Voltar para o menu\n---> ")
+            var_selecao: str = input("\nO valor de transferência excede seu saldo\n\n[1] Colocar outro valor\n[outra tecla] Voltar para o menu\n---> ")
             if var_selecao == '1':
                 continue
             else: 
