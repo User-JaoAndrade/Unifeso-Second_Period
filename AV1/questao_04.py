@@ -190,7 +190,7 @@ def deposito(login_usuario: str) -> None:
         # adiconando uma frase para ver o extrato depois
         lista_de_usuarios[login_usuario][3].append(f"+R${valor_para_depositar:.2f}")
         
-        print("Valor depositado com sucesso", end='')
+        print(f"Valor depositado com sucesso, saldo atual de {lista_de_usuarios[login_usuario][1]}", end='')
         tres_pontinhos()
         break
 
@@ -232,7 +232,7 @@ def saque(login_usuario: str) -> None:
         # Adicionando uma frase para ver o extrato depois
         lista_de_usuarios[login_usuario][3].append(f"-R${valor_para_retirar:.2f}")
         
-        print("Valor retirado com sucesso", end='')
+        print(f"Valor retirado com sucesso, saldo atual de {lista_de_usuarios[login_usuario][1]}", end='')
         tres_pontinhos()
         break
 
@@ -302,12 +302,14 @@ def transferencia(login_usuario: str) -> None:
         lista_de_usuarios[login_usuario][1] -= valor_para_transferir # Subtraindo o valor informado
         lista_de_usuarios[usuario_para_transferir][1] += valor_para_transferir # Adicionando o valor informado
         print(f"Transferência de R${valor_para_transferir:.2f} realizada com sucesso para {usuario_para_transferir}", end='')
+        print(f"\nSaldo atual da conta de {lista_de_usuarios[login_usuario][1]}")
 
         # Adicionando um texto para ver o extrato depois
         lista_de_usuarios[login_usuario][3].append(f"Transferência para {usuario_para_transferir}: R${valor_para_transferir:.2f}")
         lista_de_usuarios[usuario_para_transferir][3].append(f"Transferência de {login_usuario}: R${valor_para_transferir:.2f}")
 
         print("\nVoltando para o menu", end='')
+        time.sleep(2)
         tres_pontinhos()
         break
 
