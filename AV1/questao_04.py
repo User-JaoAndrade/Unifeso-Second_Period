@@ -95,6 +95,7 @@ def entrada_da_conta() -> None:
         print("CONTA BLOQUEADA, VÁ ATÉ A BOCA DO CAIXA PARA REALIZAR O DESBLOQUEIO")
         print("\nRetornando", end='')
         tres_pontinhos()
+        main()
 
     # Pedindo senha ao usuário
     senha_usuario: str = input("SENHA: ")
