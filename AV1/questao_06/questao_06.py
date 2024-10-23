@@ -234,6 +234,7 @@ def devolucao_do_livro() -> None:
     # Verificando se existe atraso
     if dias_passados > 15:
         multa: float = (dias_passados - 15) * 10 # Calculando valor da multa
+        dias_passados =  dias_passados - 15
     else:
         multa: float = 0
         dias_passados = 0
@@ -250,9 +251,9 @@ def devolucao_do_livro() -> None:
           f"Membro: {relatorios[numero_matricula][1]}\n"
           f"Livro Alugado: {relatorios[numero_matricula][2]}\n"
           f"Data de Aquisição: {dia_de_hoje}\n"
-          f"Data para ser Entregue: {relatorios[numero_matricula][0]}\n"
-          f"Data que foi entregue: {dia_de_hoje}\n"
-          f"Dias de atraso {dias_passados}"
+          f"Data para ser Devolvido: {relatorios[numero_matricula][0]}\n"
+          f"Data que foi entregue para biblioteca: {dia_da_entrega}\n"
+          f"Dias de atraso: {dias_passados}\n"
           f"Multa a ser paga: R${multa}")
     
     # Linhas de código pra deixar o programa mais fofinho
