@@ -15,25 +15,28 @@ def limpando_terminal() -> None:
 
 # Função que verifica as letras mais repetidas
 def calculando_letras() -> None:
-    contando_letras = Counter(cadeia_de_caracteres) # Contando as letras
-    as_mais_brabas = sorted(contando_letras.most_common(2)) # as duas que mais apareceram
+    contando_letras = Counter(cadeia_de_caracteres) # Contando o número de vezes que apareceu cada letra
+    numero_total_de_letras: int = sum(contando_letras.values()) # Somando todas as letras
+    as_mais_brabas = contando_letras.most_common(2) # as duas que mais apareceram
 
     # Caso as letras tenham aparecido a mesma quantidade de
     if as_mais_brabas[0][1] == as_mais_brabas[1][1]:
         as_mais_brabas = sorted(as_mais_brabas) # Deixando em ordem alfabética
-        for letra, contagem in as_mais_brabas:
-            print(f"{letra}: {contagem}")
-            break
-    else:
-        # Pegando as duas letras mais comuns em ordem decrescente
-        for letra, contagem in as_mais_brabas:
-            print(f"{letra}: {contagem}")
 
+        for letra, contagem in as_mais_brabas:
+            print(f"{letra.upper()}: {(contagem/numero_total_de_letras)*100:.2f}%")
+
+    else:
+        for letra, contagem in as_mais_brabas:
+            print(f"{letra.upper()}: {(contagem/numero_total_de_letras)*100:.2f}%")
+
+
+""" inicio do programa """
 if __name__ == "__main__":
     while True:
         limpando_terminal()
         cadeia_de_caracteres: str = input("Informe uma sequência de caracteres (não coloque espaços): ")
-        
+
         # Verificando se a cadeia de letras possui <= 1000 caracteres e se tem espaços
         if len(cadeia_de_caracteres) > 1000 or ' ' in cadeia_de_caracteres:
             print("\nPor favor, informe uma lista com:\n"
@@ -41,6 +44,10 @@ if __name__ == "__main__":
                   "- Sem espaços")
             time.sleep(5)
             continue
+
+        # Removendo caracteres que não sejam de A até Z
+        cadeia_de_caracteres = filter(lambda c: c.isalpha() and c.isascii(), cadeia_de_caracteres)
+        
 
         calculando_letras()
         break
