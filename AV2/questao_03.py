@@ -35,7 +35,7 @@ def calculando_letras() -> None:
 if __name__ == "__main__":
     while True:
         limpando_terminal()
-        cadeia_de_caracteres: str = input("Informe uma sequência de caracteres (não coloque espaços): ")
+        cadeia_de_caracteres: str = input("Informe uma sequência de caracteres (não coloque espaços): ").lower()
 
         # Verificando se a cadeia de letras possui <= 1000 caracteres e se tem espaços
         if len(cadeia_de_caracteres) > 1000 or ' ' in cadeia_de_caracteres:
