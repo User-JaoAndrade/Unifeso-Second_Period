@@ -26,6 +26,12 @@ def calculando_letras() -> None:
         for letra, contagem in as_mais_brabas:
             print(f"{letra.upper()}: {(contagem/numero_total_de_letras)*100:.2f}%")
 
+    # Caso tenha um empate entre a segunda e a terceira letra que mais apareceram
+    elif contando_letras[1] == contando_letras[2]:
+        for letra, contagem in as_mais_brabas:
+            print(f"{letra.upper()}: {(contagem/numero_total_de_letras)*100:.2f}")
+            break
+
     else:
         for letra, contagem in as_mais_brabas:
             print(f"{letra.upper()}: {(contagem/numero_total_de_letras)*100:.2f}%")
