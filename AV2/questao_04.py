@@ -20,12 +20,17 @@ if __name__ == "__main__":
     print_animation("\nCódigo para decodificar ->  ", 0.02)
     kni_code: str = input()
 
+    # Caso tenha mais de 250 caracteres
+    while len(kni_code) > 250:
+        print_animation("\n\nPor Favor, informe uma cadeia de caracteres de no MÁXIMO 250 caracteres -> ")
+        kni_code = input()
+
     print_animation("\ndecodificando", 0.02)
     print_animation("...", 1)
     print("\n")
 
     for i, caractere in enumerate(kni_code):
-
+        
         # Verificando se o digito é um número
         if caractere.isdigit():
             numero:str = caractere
